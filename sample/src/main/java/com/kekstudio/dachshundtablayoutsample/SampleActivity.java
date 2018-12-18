@@ -27,19 +27,24 @@ public class SampleActivity extends AppCompatActivity {
 
     private ViewPager viewPager;
     private DachshundTabLayout tabLayout;
-
+    private Toolbar toolbar;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sample);
 
-        setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
+        int width=getWindowManager().getDefaultDisplay().getWidth();
+        System.out.println("width:"+width);
+        toolbar=(Toolbar) findViewById(R.id.toolbar);
+        toolbar.setContentDescription("1312312312312");
+        setSupportActionBar(toolbar);
 
         viewPager = findViewById(R.id.view_pager);
         viewPager.setAdapter(new PagerAdapter(getSupportFragmentManager()));
 
         tabLayout = findViewById(R.id.tab_layout);
         tabLayout.setupWithViewPager(viewPager);
+        viewPager.setCurrentItem(1);
     }
 
     public void onClickDachshund(View view){

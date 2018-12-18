@@ -59,7 +59,6 @@ public class DachshundTabLayout extends TabLayout implements ViewPager.OnPageCha
         super.setSelectedTabIndicatorHeight(0);
 
         mTabStrip = (LinearLayout) super.getChildAt(0);
-
         TypedArray ta = context.obtainStyledAttributes(attrs, R.styleable.DachshundTabLayout);
 
         this.mIndicatorHeight = ta.getDimensionPixelSize(R.styleable.DachshundTabLayout_ddIndicatorHeight, HelperUtils.dpToPx(DEFAULT_HEIGHT_DP));
@@ -70,24 +69,40 @@ public class DachshundTabLayout extends TabLayout implements ViewPager.OnPageCha
         ta.recycle();
     }
 
+    /**
+     * 布局事件监听
+     * @param changed
+     * @param l
+     * @param t
+     * @param r
+     * @param b
+     */
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
         super.onLayout(changed, l, t, r, b);
 
+        /**
+         * 是否居中
+         */
         if (mCenterAlign) {
-            View firstTab = ((ViewGroup) getChildAt(0)).getChildAt(0);
+            //取出第二个tab标签
+            View secondTab = ((ViewGroup) getChildAt(0)).getChildAt(1);
+            //取出最后一个标签
             View lastTab = ((ViewGroup) getChildAt(0)).getChildAt(((ViewGroup) getChildAt(0)).getChildCount() - 1);
+            //进行设置 对整个的 标签 内容 （包含对应的 index内容）
             ViewCompat.setPaddingRelative(getChildAt(0),
-                    (getWidth() / 2) - (firstTab.getWidth() / 2),
+                    (getWidth() / 2) - (secondTab.getWidth()*3/2),
                     0,
-                    (getWidth() / 2) - (lastTab.getWidth() / 2),
+                    (getWidth() / 2) - (lastTab.getWidth() *3/ 2),
                     0);
         }
 
+        //设置 标签 指示器的动画
         if (mAnimatedIndicator == null) {
             setupAnimatedIndicator();
         }
-
+        System.out.println("mTabStrip child  count:"+mTabStrip.getChildCount());
+        //调用 pageScroll函数
         onPageScrolled(mTempPosition, mTempPositionOffset, mTempPositionOffsetPixels);
     }
 
@@ -111,51 +126,69 @@ public class DachshundTabLayout extends TabLayout implements ViewPager.OnPageCha
         }
     }
 
+    /**
+     * 设置 标签指示器的 属性 指示器的颜色 和 高度
+     * @param animatedIndicator
+     */
     public void setAnimatedIndicator(AnimatedIndicatorInterface animatedIndicator) {
         this.mAnimatedIndicator = animatedIndicator;
-
         animatedIndicator.setSelectedTabIndicatorColor(mIndicatorColor);
         animatedIndicator.setSelectedTabIndicatorHeight(mIndicatorHeight);
-
         invalidate();
     }
 
+    /**
+     * 设置 tabIndexf 的颜色
+     * @param color
+     */
     @Override
     public void setSelectedTabIndicatorColor(@ColorInt int color) {
         this.mIndicatorColor = color;
         if (mAnimatedIndicator != null) {
             mAnimatedIndicator.setSelectedTabIndicatorColor(color);
-
             invalidate();
         }
     }
 
+    /**
+     * 设置 tabIndex 的 height
+     * @param height
+     */
     @Override
     public void setSelectedTabIndicatorHeight(int height) {
         this.mIndicatorHeight = height;
         if (mAnimatedIndicator != null) {
             mAnimatedIndicator.setSelectedTabIndicatorHeight(height);
-
             invalidate();
         }
 
     }
 
+    /**
+     * 设置 居中属性
+     * @param centerAlign
+     */
     public void setCenterAlign(boolean centerAlign) {
         this.mCenterAlign = centerAlign;
-
         requestLayout();
     }
 
+    /**
+     * 将 tabLayout 与 viewPager 进行绑定
+     * @param viewPager
+     */
     @Override
     public void setupWithViewPager(@Nullable ViewPager viewPager) {
         this.setupWithViewPager(viewPager, true);
     }
 
+    /**
+     * 将 tabLayout 与 viewPager 进行绑定
+     * @param viewPager
+     */
     @Override
     public void setupWithViewPager(@Nullable final ViewPager viewPager, boolean autoRefresh) {
         super.setupWithViewPager(viewPager, autoRefresh);
-
         //TODO
         if (viewPager != null) {
             viewPager.removeOnPageChangeListener(this);
@@ -163,34 +196,54 @@ public class DachshundTabLayout extends TabLayout implements ViewPager.OnPageCha
         }
     }
 
+    /**
+     * 进行 绘制
+     * @param canvas
+     */
     @Override
     public void draw(Canvas canvas) {
         super.draw(canvas);
-
+        //交给 指示器动画 绘制
         if (mAnimatedIndicator != null)
             mAnimatedIndicator.draw(canvas);
-
     }
 
     @Override
     public void onPageScrollStateChanged(final int state) {
     }
 
+    /**
+     * 页面切换 时候 的动画
+     * @param position
+     * @param positionOffset
+     * @param positionOffsetPixels
+     */
     @Override
     public void onPageScrolled(final int position, final float positionOffset,
                                final int positionOffsetPixels) {
+
+        System.out.println("onPageScrolled mTempPosition:"+mTempPosition+
+                                  "..mTempPositionOffset:"+mTempPositionOffset+"..mTempPositionOffsetPixels:"+mTempPositionOffsetPixels);
+
+        //当前界面 对应的position
         this.mTempPosition = position;
+        //偏移的比例
         this.mTempPositionOffset = positionOffset;
+        //偏移的像素的位置
         this.mTempPositionOffsetPixels = positionOffsetPixels;
 
+        //将当前位置记录
         if ((position > mCurrentPosition) || (position + 1 < mCurrentPosition)) {
             mCurrentPosition = position;
         }
 
-        int mStartXLeft, mStartXCenter, mStartXRight, mEndXLeft, mEndXCenter, mEndXRight;
+        //对应的 开始的左侧x坐标值  开始的中间x坐标值 开始的右侧x坐标值
+        int mStartXLeft, mStartXCenter, mStartXRight,
+                //对应的 结束的左侧x坐标值  结束的中间x坐标值 结束的右侧x坐标值
+                   mEndXLeft, mEndXCenter, mEndXRight;
 
+        //当前位置 不等于 记录的位置
         if (position != mCurrentPosition) {
-
             mStartXLeft = (int) getChildXLeft(mCurrentPosition);
             mStartXCenter = (int) getChildXCenter(mCurrentPosition);
             mStartXRight = (int) getChildXRight(mCurrentPosition);
@@ -247,6 +300,11 @@ public class DachshundTabLayout extends TabLayout implements ViewPager.OnPageCha
         return mCurrentPosition;
     }
 
+    /**
+     * 获取 当前
+     * @param position
+     * @return
+     */
     public float getChildXLeft(int position) {
         if (mTabStrip.getChildAt(position) != null)
             return (mTabStrip.getChildAt(position).getX());

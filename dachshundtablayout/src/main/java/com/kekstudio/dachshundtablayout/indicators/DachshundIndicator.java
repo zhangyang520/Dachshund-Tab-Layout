@@ -108,7 +108,7 @@ public class DachshundIndicator implements AnimatedIndicatorInterface, ValueAnim
     public void draw(Canvas canvas) {
         rectF.top = dachshundTabLayout.getHeight() - height;
         rectF.left =  leftX - height/2;
-        rectF.right = rightX + height/2;
+        rectF.right = rightX + height*2;
         rectF.bottom = dachshundTabLayout.getHeight();
 
         canvas.drawRoundRect(rectF, height, height, paint);

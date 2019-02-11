@@ -30,7 +30,7 @@
                 custom:ddIndicatorHeight="6dp"
                 custom:ddIndicatorColor="@android:color/white"
                 android:background="#00ffff"
-                custom:ddCenterAlign="true"
+                custom:ddCenterAlign="false"
                 custom:tabGravity="center"
                 custom:tabMode="scrollable"/>
 

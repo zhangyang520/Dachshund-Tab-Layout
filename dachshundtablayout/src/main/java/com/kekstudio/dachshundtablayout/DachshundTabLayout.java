@@ -91,7 +91,7 @@ public class DachshundTabLayout extends TabLayout implements ViewPager.OnPageCha
             View lastTab = ((ViewGroup) getChildAt(0)).getChildAt(((ViewGroup) getChildAt(0)).getChildCount() - 1);
             //进行设置 对整个的 标签 内容 （包含对应的 index内容）
             ViewCompat.setPaddingRelative(getChildAt(0),
-                    (getWidth() / 2) - (secondTab.getWidth()*3/2),
+                    (getWidth() / 2) - (secondTab.getWidth()),
                     0,
                     (getWidth() / 2) - (lastTab.getWidth() *3/ 2),
                     0);
